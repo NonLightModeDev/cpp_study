@@ -1,8 +1,73 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <array>
 
 using namespace std;
+
+struct JogadasPossiveis {
+    private:
+        int jogadas[9][2] = {
+            {0,0},
+            {0,1},
+            {0,2},
+            {1,0},
+            {1,1},
+            {1,2},
+            {2,0},
+            {2,1},
+            {2,2}
+        };
+
+        int jogadasDisponiveis[9] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+        int quantidade = 9;
+    
+    public:
+        int remover(int indice) {
+            int i = jogadasDisponiveis[indice];
+
+            for(int i = indice; i < quantidade - 1; i++) {
+                jogadasDisponiveis[i] = jogadasDisponiveis[i+1];
+            }
+
+            quantidade--;
+
+            return i;
+        }
+
+        int indiceDe(int (&elemento)[2]) {
+            int indice = -1;
+            for(int i = 0; i < 9; i++) {
+                if(elemento[0] == jogadas[i][0] && elemento[1] == jogadas[i][1]) {
+                    indice = i;
+                    break;
+                }
+            }
+
+            if(indice != -1) {
+                for(int i = 0; i < quantidade; i++) {
+                    if(indice == jogadasDisponiveis[i]) {
+                        indice = i;
+                    }
+                }
+            }
+
+            return indice;
+        }
+
+        int gerarIndice() {
+            srand(time(0));
+
+            return rand() % quantidade;
+        }
+
+        std::array<int, 2> utilizarJogada(int indice) {
+            int linha = jogadas[indice][0];
+            int coluna = jogadas[indice][1];
+
+            return {linha, coluna};
+        }
+};
 
 class Tabuleiro {
     char tabuleiro[3][3];
@@ -164,6 +229,7 @@ class JogoDaVelha {
             int linha;
             int coluna;
             bool ok;
+            JogadasPossiveis jogadasPossiveis;
 
             while(jogadas < 9) {
                 tabuleiro.exibir();
@@ -184,15 +250,23 @@ class JogoDaVelha {
                         cin >> linha;
                         cout << "  -> Coluna: ";
                         cin >> coluna;
-                        ok = fazerJogada('X', linha, coluna);
+                        int jogadaPossivel[2] = {linha, coluna};
+                        int indiceJogadasPossiveis = jogadasPossiveis.indiceDe(jogadaPossivel);
+                        if(indiceJogadasPossiveis == -1) {
+                            ok = false;
+                        } else {
+                            int indiceJogadasDisponiveis = jogadasPossiveis.remover(indiceJogadasPossiveis);
+                            auto jogadaUtilizada = jogadasPossiveis.utilizarJogada(indiceJogadasDisponiveis);
+                            ok = fazerJogada('X', jogadaUtilizada[0], jogadaUtilizada[1]); 
+                        }
                     } while(!ok);
                 } else {
                     if(solo) {
                         cout << "\n\nComputador pensando...\n" << endl;
                         do {
-                            linha = gerarAleatorio();
-                            coluna = gerarAleatorio();
-                            ok = fazerJogada('O', linha, coluna);
+                            int indiceJogadasDisponiveis = jogadasPossiveis.remover(jogadasPossiveis.gerarIndice());
+                            auto jogadaUtilizada = jogadasPossiveis.utilizarJogada(indiceJogadasDisponiveis);
+                            ok = fazerJogada('O', jogadaUtilizada[0], jogadaUtilizada[1]); 
                         } while(!ok);
                     } else {
                         cout << "\nPeça O:" << endl;
@@ -200,7 +274,15 @@ class JogoDaVelha {
                         cin >> linha;
                         cout << "  -> Coluna: ";
                         cin >> coluna;
-                        ok = fazerJogada('O', linha, coluna);
+                        int jogadaPossivel[2] = {linha, coluna};
+                        int indiceJogadasPossiveis = jogadasPossiveis.indiceDe(jogadaPossivel);
+                        if(indiceJogadasPossiveis == -1) {
+                            ok = false;
+                        } else {
+                            int indiceJogadasDisponiveis = jogadasPossiveis.remover(indiceJogadasPossiveis);
+                            auto jogadaUtilizada = jogadasPossiveis.utilizarJogada(indiceJogadasDisponiveis);
+                            ok = fazerJogada('O', jogadaUtilizada[0], jogadaUtilizada[1]); 
+                        }
                     }
                 }
 
@@ -253,12 +335,6 @@ class JogoDaVelha {
             if((linha < 0 || linha > 2) && (coluna < 0 && coluna > 2)) return false;
 
             return tabuleiro.atualizar(peca, linha, coluna);
-        }
-
-        static int gerarAleatorio() {
-            srand(time(0));
-
-            return rand() % 3;
         }
 };
 
