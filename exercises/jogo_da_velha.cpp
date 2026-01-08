@@ -131,68 +131,80 @@ public:
 
         switch(opcao) {
         case 1:
-            int linha;
-            int coluna;
-            bool ok;
-
-            while(jogadas < 9) {
-                tabuleiro.exibir();
-                ok = true;
-
-                if(jogadas > 4) {
-                    vencedor = buscarVencedor(tabuleiro);
-                    if(vencedor == 1 || vencedor == 2) {
-                        haVencedor = true;
-                        break;
-                    }
-                }
-
-                if(jogadas % 2 == 0) {
-                    do {
-                        cout << "\nPeça X:" << endl;
-                        cout << "  -> Linha: ";
-                        cin >> linha;
-                        cout << "  -> Coluna: ";
-                        cin >> coluna;
-                        ok = fazerJogada('X', linha, coluna, tabuleiro);
-                    } while(!ok);
-                } else {
-                    do {
-                        linha = gerarAleatorio();
-                        coluna = gerarAleatorio();
-                        ok = fazerJogada('O', linha, coluna, tabuleiro);
-                    } while(!ok);
-                }
-
-                if(jogadas > 4) {
-                    vencedor = buscarVencedor(tabuleiro);
-                    if(vencedor == 1 || vencedor == 2) {
-                        haVencedor = true;
-                        break;
-                    }
-                }
-                jogadas++;
-            }
-
-            cout << "\n\n\n ---> Fim de jogo! <---" << endl;
-            tabuleiro.exibir();
-            cout << endl;
-            if(haVencedor) {
-                if(vencedor == 1) cout << "'X' venceu!" << endl;
-                else cout << "'O' venceu!" << endl;
-            } else {
-                cout << "Deu Velha!" << endl;
-            }
-            cout << " -------->  <--------" << endl;
-
+            jogar(tabuleiro, true);
             break;
         case 2:
-            cout << "Dois jogadores" << endl;
+            jogar(tabuleiro, false);
             break;
         default:
             cout << "\nOpção inválida!" << endl;
             cout << "Saindo..." << endl;
         }
+    }
+
+    static void jogar(Tabuleiro &tabuleiro, bool solo) {
+        int linha;
+        int coluna;
+        bool ok;
+
+        while(jogadas < 9) {
+            tabuleiro.exibir();
+            ok = true;
+
+            if(jogadas > 4) {
+                vencedor = buscarVencedor(tabuleiro);
+                if(vencedor == 1 || vencedor == 2) {
+                    haVencedor = true;
+                    break;
+                }
+            }
+
+            if(jogadas % 2 == 0) {
+                do {
+                    cout << "\nPeça X:" << endl;
+                    cout << "  -> Linha: ";
+                    cin >> linha;
+                    cout << "  -> Coluna: ";
+                    cin >> coluna;
+                    ok = fazerJogada('X', linha, coluna, tabuleiro);
+                } while(!ok);
+            } else {
+                if(solo) {
+                    do {
+                        linha = gerarAleatorio();
+                        coluna = gerarAleatorio();
+                        ok = fazerJogada('O', linha, coluna, tabuleiro);
+                    } while(!ok);
+                } else {
+                    cout << "\nPeça O:" << endl;
+                    cout << "  -> Linha: ";
+                    cin >> linha;
+                    cout << "  -> Coluna: ";
+                    cin >> coluna;
+                    ok = fazerJogada('O', linha, coluna, tabuleiro);
+                }
+            }
+
+            if(jogadas > 4) {
+                vencedor = buscarVencedor(tabuleiro);
+                if(vencedor == 1 || vencedor == 2) {
+                    haVencedor = true;
+                    break;
+                }
+            }
+            jogadas++;
+        }
+
+        cout << "\n\n\n ---> Fim de jogo! <---" << endl;
+        tabuleiro.exibir();
+        cout << endl;
+        if(haVencedor) {
+            if(vencedor == 1) cout << "'X' venceu!" << endl;
+            else cout << "'O' venceu!" << endl;
+        } else {
+            cout << "Deu Velha!" << endl;
+        }
+        cout << " -------->  <--------" << endl;
     }
 
     static int exibirMenu() {
