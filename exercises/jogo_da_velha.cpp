@@ -7,120 +7,122 @@ using namespace std;
 class Tabuleiro {
     char tabuleiro[3][3];
 
-public:
-    Tabuleiro() {
-        for(int i = 0; i < 3; i++) {
-            for(int j = 0; j < 3; j++) {
-                tabuleiro[i][j] = ' ';
-            }
-        }
-    }
-
-    void exibir() {
-        cout << "\n\n|-------------|" << endl;
-        cout << "|  Tabuleiro  |" << endl;
-        cout << "|-------------|\n" << endl;
-        cout << "     0 1 2\n" << endl;
-        for(int i = 0; i < 3; i++) {
-            cout << " " << i << "   ";
-            for(int j = 0; j < 3; j++) {
-                cout << tabuleiro[i][j];
-                if(j != 2) cout << "|";
-            }
-            cout << endl;
-            if(i != 2) cout << "    -------" << endl;
-        }
-    }
-
-    bool estaLivre(int linha, int coluna) {
-        return tabuleiro[linha][coluna] == ' ';
-    }
-
-    bool atualizar(char peca, int linha, int coluna) {
-        if(estaLivre(linha, coluna)) {
-            tabuleiro[linha][coluna] = peca;
-            return true;
+    public:
+        Tabuleiro() {
+            redefinir();
         }
 
-        return false;
-    }
-
-    bool verificarSequencia(char peca) {
-        int contador = 0;
-        for(int i = 0; i < 3; i++) {
-            if(tabuleiro[0][i] == peca) {
-                contador++;
-            }
-        }
-        if(contador == 3) return true;
-
-
-        contador = 0;
-        for(int i = 0; i < 3; i++) {
-            if(tabuleiro[1][i] == peca) {
-                contador++;
-            }
-        }
-        if(contador == 3) return true;
-
-        contador = 0;
-        for(int i = 0; i < 3; i++) {
-            if(tabuleiro[2][i] == peca) {
-                contador++;
-            }
-        }
-        if(contador == 3) return true;
-
-        contador = 0;
-        for(int i = 0; i < 3; i++) {
-            if(tabuleiro[i][0] == peca) {
-                contador++;
-            }
-        }
-        if(contador == 3) return true;
-
-        contador = 0;
-        for(int i = 0; i < 3; i++) {
-            if(tabuleiro[i][1] == peca) {
-                contador++;
-            }
-        }
-        if(contador == 3) return true;
-
-        contador = 0;
-        for(int i = 0; i < 3; i++) {
-            if(tabuleiro[i][2] == peca) {
-                contador++;
-            }
-        }
-        if(contador == 3) return true;
-
-        contador = 0;
-        for(int i = 0; i < 3; i++) {
-            if(tabuleiro[i][i] == peca) {
-                contador++;
-            }
-        }
-        if(contador == 3) return true;
-
-        contador = 0;
-        for(int i = 0; i < 3; i++) {
-            for(int j = 2; j >= 0; j--) {
-                if(tabuleiro[i][j]) {
-                    contador++;
+        void redefinir() {
+            for(int i = 0; i < 3; i++) {
+                for(int j = 0; j < 3; j++) {
+                    tabuleiro[i][j] = ' ';
                 }
             }
         }
-        if(contador == 3) return true;
 
-        return false;
-    }
+        void exibir() {
+            cout << "\n\n|-------------|" << endl;
+            cout << "|  Tabuleiro  |" << endl;
+            cout << "|-------------|\n" << endl;
+            cout << "     0 1 2\n" << endl;
+            for(int i = 0; i < 3; i++) {
+                cout << " " << i << "   ";
+                for(int j = 0; j < 3; j++) {
+                    cout << tabuleiro[i][j];
+                    if(j != 2) cout << "|";
+                }
+                cout << endl;
+                if(i != 2) cout << "    -------" << endl;
+            }
+        }
+
+        bool estaLivre(int linha, int coluna) {
+            return tabuleiro[linha][coluna] == ' ';
+        }
+
+        bool atualizar(char peca, int linha, int coluna) {
+            if(estaLivre(linha, coluna)) {
+                tabuleiro[linha][coluna] = peca;
+                return true;
+            }
+
+            return false;
+        }
+
+        bool verificarSequencia(char peca) {
+            int contador = 0;
+            for(int i = 0; i < 3; i++) {
+                if(tabuleiro[0][i] == peca) {
+                    contador++;
+                }
+            }
+            if(contador == 3) return true;
+
+
+            contador = 0;
+            for(int i = 0; i < 3; i++) {
+                if(tabuleiro[1][i] == peca) {
+                    contador++;
+                }
+            }
+            if(contador == 3) return true;
+
+            contador = 0;
+            for(int i = 0; i < 3; i++) {
+                if(tabuleiro[2][i] == peca) {
+                    contador++;
+                }
+            }
+            if(contador == 3) return true;
+
+            contador = 0;
+            for(int i = 0; i < 3; i++) {
+                if(tabuleiro[i][0] == peca) {
+                    contador++;
+                }
+            }
+            if(contador == 3) return true;
+
+            contador = 0;
+            for(int i = 0; i < 3; i++) {
+                if(tabuleiro[i][1] == peca) {
+                    contador++;
+                }
+            }
+            if(contador == 3) return true;
+
+            contador = 0;
+            for(int i = 0; i < 3; i++) {
+                if(tabuleiro[i][2] == peca) {
+                    contador++;
+                }
+            }
+            if(contador == 3) return true;
+
+            contador = 0;
+            for(int i = 0; i < 3; i++) {
+                if(tabuleiro[i][i] == peca) {
+                    contador++;
+                }
+            }
+            if(contador == 3) return true;
+
+            contador = 0;
+            for(int i = 0; i < 3; i++) {
+                for(int j = 2; j >= 0; j--) {
+                    if(tabuleiro[i][j]) {
+                        contador++;
+                    }
+                }
+            }
+            if(contador == 3) return true;
+
+            return false;
+        }
 };
 
 class JogoDaVelha {
-    inline static bool haVencedor = false;
-    inline static int jogadas = 0;
-    inline static int vencedor = -1;
+    inline static Tabuleiro tabuleiro;
 
     public:
         static void iniciar() {
@@ -131,15 +133,14 @@ class JogoDaVelha {
                 while(true) {
                     cout << "\n           v\n           v\n           v" << endl;
 
-                    Tabuleiro tabuleiro;
                     int opcao = exibirMenu();
 
                     switch(opcao) {
                     case 1:
-                        jogar(tabuleiro, true);
+                        jogar(true);
                         break;
                     case 2:
-                        jogar(tabuleiro, false);
+                        jogar(false);
                         break;
                     default:
                         cout << "\nOpção inválida!" << endl;
@@ -151,14 +152,15 @@ class JogoDaVelha {
                         break;
                     }
 
-                    haVencedor = false;
-                    jogadas = 0;
-                    vencedor = -1;
+                    tabuleiro.redefinir();
                 }
             }
         }
 
-        static void jogar(Tabuleiro &tabuleiro, bool solo) {
+        static void jogar(bool solo) {
+            bool haVencedor = false;
+            int jogadas = 0;
+            int vencedor = -1;
             int linha;
             int coluna;
             bool ok;
@@ -167,8 +169,8 @@ class JogoDaVelha {
                 tabuleiro.exibir();
                 ok = true;
 
-                if(jogadas > 3) {
-                    vencedor = buscarVencedor(tabuleiro);
+                if(jogadas > 4) {
+                    vencedor = buscarVencedor();
                     if(vencedor == 1 || vencedor == 2) {
                         haVencedor = true;
                         break;
@@ -182,7 +184,7 @@ class JogoDaVelha {
                         cin >> linha;
                         cout << "  -> Coluna: ";
                         cin >> coluna;
-                        ok = fazerJogada('X', linha, coluna, tabuleiro);
+                        ok = fazerJogada('X', linha, coluna);
                     } while(!ok);
                 } else {
                     if(solo) {
@@ -190,7 +192,7 @@ class JogoDaVelha {
                         do {
                             linha = gerarAleatorio();
                             coluna = gerarAleatorio();
-                            ok = fazerJogada('O', linha, coluna, tabuleiro);
+                            ok = fazerJogada('O', linha, coluna);
                         } while(!ok);
                     } else {
                         cout << "\nPeça O:" << endl;
@@ -198,12 +200,12 @@ class JogoDaVelha {
                         cin >> linha;
                         cout << "  -> Coluna: ";
                         cin >> coluna;
-                        ok = fazerJogada('O', linha, coluna, tabuleiro);
+                        ok = fazerJogada('O', linha, coluna);
                     }
                 }
 
-                if(jogadas > 3) {
-                    vencedor = buscarVencedor(tabuleiro);
+                if(jogadas > 4) {
+                    vencedor = buscarVencedor();
                     if(vencedor == 1 || vencedor == 2) {
                         haVencedor = true;
                         break;
@@ -239,7 +241,7 @@ class JogoDaVelha {
             return opcao;
         }
 
-        static int buscarVencedor(Tabuleiro &tabuleiro) {
+        static int buscarVencedor() {
             if(tabuleiro.verificarSequencia('X')) return 1;
 
             if(tabuleiro.verificarSequencia('O')) return 2;
@@ -247,7 +249,7 @@ class JogoDaVelha {
             return 0;
         }
 
-        static bool fazerJogada(char peca, int linha, int coluna, Tabuleiro &tabuleiro) {
+        static bool fazerJogada(char peca, int linha, int coluna) {
             if((linha < 0 || linha > 2) && (coluna < 0 && coluna > 2)) return false;
 
             return tabuleiro.atualizar(peca, linha, coluna);
