@@ -5,70 +5,6 @@
 
 using namespace std;
 
-struct JogadasPossiveis {
-    private:
-        int jogadas[9][2] = {
-            {0,0},
-            {0,1},
-            {0,2},
-            {1,0},
-            {1,1},
-            {1,2},
-            {2,0},
-            {2,1},
-            {2,2}
-        };
-
-        int jogadasDisponiveis[9] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
-        int quantidade = 9;
-    
-    public:
-        int remover(int indice) {
-            int i = jogadasDisponiveis[indice];
-
-            for(int i = indice; i < quantidade - 1; i++) {
-                jogadasDisponiveis[i] = jogadasDisponiveis[i+1];
-            }
-
-            quantidade--;
-
-            return i;
-        }
-
-        int indiceDe(int (&elemento)[2]) {
-            int indice = -1;
-            for(int i = 0; i < 9; i++) {
-                if(elemento[0] == jogadas[i][0] && elemento[1] == jogadas[i][1]) {
-                    indice = i;
-                    break;
-                }
-            }
-
-            if(indice != -1) {
-                for(int i = 0; i < quantidade; i++) {
-                    if(indice == jogadasDisponiveis[i]) {
-                        indice = i;
-                    }
-                }
-            }
-
-            return indice;
-        }
-
-        int gerarIndice() {
-            srand(time(0));
-
-            return rand() % quantidade;
-        }
-
-        std::array<int, 2> utilizarJogada(int indice) {
-            int linha = jogadas[indice][0];
-            int coluna = jogadas[indice][1];
-
-            return {linha, coluna};
-        }
-};
-
 class Tabuleiro {
     char tabuleiro[3][3];
 
@@ -188,6 +124,19 @@ class Tabuleiro {
 
 class JogoDaVelha {
     inline static Tabuleiro tabuleiro;
+    inline static int jogadasPossiveis[9][2] = {
+        {0,0},
+        {0,1},
+        {0,2},
+        {1,0},
+        {1,1},
+        {1,2},
+        {2,0},
+        {2,1},
+        {2,2}
+    };
+
+    inline static int jogadasRestantes = 9;
 
     public:
         static void iniciar() {
@@ -218,6 +167,7 @@ class JogoDaVelha {
                     }
 
                     tabuleiro.redefinir();
+                    redefinirJogadasPossiveis();
                 }
             }
         }
@@ -229,7 +179,6 @@ class JogoDaVelha {
             int linha;
             int coluna;
             bool ok;
-            JogadasPossiveis jogadasPossiveis;
 
             while(jogadas < 9) {
                 tabuleiro.exibir();
@@ -250,39 +199,44 @@ class JogoDaVelha {
                         cin >> linha;
                         cout << "  -> Coluna: ";
                         cin >> coluna;
-                        int jogadaPossivel[2] = {linha, coluna};
-                        int indiceJogadasPossiveis = jogadasPossiveis.indiceDe(jogadaPossivel);
-                        if(indiceJogadasPossiveis == -1) {
-                            ok = false;
+                        int jogada[2] = {linha, coluna};
+                        int indiceJogada = obterIndiceJogada(jogada);
+                        if(removerJogada(indiceJogada)) {
+                           fazerJogada('X', linha, coluna);
+                           ok = true;
                         } else {
-                            int indiceJogadasDisponiveis = jogadasPossiveis.remover(indiceJogadasPossiveis);
-                            auto jogadaUtilizada = jogadasPossiveis.utilizarJogada(indiceJogadasDisponiveis);
-                            ok = fazerJogada('X', jogadaUtilizada[0], jogadaUtilizada[1]); 
+                            ok = false;
                         }
                     } while(!ok);
                 } else {
                     if(solo) {
                         cout << "\n\nComputador pensando...\n" << endl;
                         do {
-                            int indiceJogadasDisponiveis = jogadasPossiveis.remover(jogadasPossiveis.gerarIndice());
-                            auto jogadaUtilizada = jogadasPossiveis.utilizarJogada(indiceJogadasDisponiveis);
-                            ok = fazerJogada('O', jogadaUtilizada[0], jogadaUtilizada[1]); 
+                            int indice = gerarIndice();
+                            auto jogada = obterJogada(indice);
+                            if(removerJogada(indice)) {
+                                fazerJogada('O', jogada[0], jogada[1]);
+                                ok = true;
+                            } else {
+                                ok = false;
+                            }
                         } while(!ok);
                     } else {
-                        cout << "\nPeça O:" << endl;
-                        cout << "  -> Linha: ";
-                        cin >> linha;
-                        cout << "  -> Coluna: ";
-                        cin >> coluna;
-                        int jogadaPossivel[2] = {linha, coluna};
-                        int indiceJogadasPossiveis = jogadasPossiveis.indiceDe(jogadaPossivel);
-                        if(indiceJogadasPossiveis == -1) {
-                            ok = false;
-                        } else {
-                            int indiceJogadasDisponiveis = jogadasPossiveis.remover(indiceJogadasPossiveis);
-                            auto jogadaUtilizada = jogadasPossiveis.utilizarJogada(indiceJogadasDisponiveis);
-                            ok = fazerJogada('O', jogadaUtilizada[0], jogadaUtilizada[1]); 
-                        }
+                        do {
+                            cout << "\nPeça O:" << endl;
+                            cout << "  -> Linha: ";
+                            cin >> linha;
+                            cout << "  -> Coluna: ";
+                            cin >> coluna;
+                            int jogada[2] = {linha, coluna};
+                            int indiceJogada = obterIndiceJogada(jogada);
+                            if(removerJogada(indiceJogada)) {
+                            fazerJogada('O', linha, coluna);
+                            ok = true;
+                            } else {
+                                ok = false;
+                            }
+                        } while(!ok);
                     }
                 }
 
@@ -332,9 +286,69 @@ class JogoDaVelha {
         }
 
         static bool fazerJogada(char peca, int linha, int coluna) {
-            if((linha < 0 || linha > 2) && (coluna < 0 && coluna > 2)) return false;
+            if((linha < 0 || linha > 2) || (coluna < 0 || coluna > 2)) return false;
 
             return tabuleiro.atualizar(peca, linha, coluna);
+        }
+
+        static int gerarIndice() {
+            srand(time(0));
+
+            return rand() % jogadasRestantes;
+        }
+
+        static void redefinirJogadasPossiveis() {
+            int a, b, c;
+            a = b = c = 0;
+            for(int i = 0; i < 9; i++) {
+                if(i < 3) {
+                    jogadasPossiveis[i][0] = 0;
+                    jogadasPossiveis[i][1] = a++; // 'a' só será incrementada depois que essa instrução (instrução é aquilo que terminar com ;) for executada
+                } else if(i < 6) {
+                    jogadasPossiveis[i][0] = 1;
+                    jogadasPossiveis[i][1] = b++; // 'b' só será incrementada depois que essa instrução (instrução é aquilo que terminar com ;) for executada
+                } else {
+                    jogadasPossiveis[i][0] = 2;
+                    jogadasPossiveis[i][1] = c++; // 'c' só será incrementada depois que essa instrução (instrução é aquilo que terminar com ;) for executada
+                }
+            }
+
+            jogadasRestantes = 9;
+        }
+
+        static int obterIndiceJogada(int (&jogada)[2]) {
+            int indice = -1;
+
+            for(int i = 0; i < jogadasRestantes; i++) {
+                if(jogada[0] == jogadasPossiveis[i][0] && jogada[1] == jogadasPossiveis[i][1]) indice = i;
+            }
+
+            return indice;
+        }
+
+        static bool removerJogada(int indice) {
+            if(indice < 0 || indice >= jogadasRestantes) return false;
+
+            for(int i = indice; i < jogadasRestantes - 1; i++) {
+                jogadasPossiveis[i][0] = jogadasPossiveis[i+1][0];
+                jogadasPossiveis[i][1] = jogadasPossiveis[i+1][1];
+            }
+            jogadasRestantes--;
+
+            return true;
+        }
+
+        static std::array<int, 2> obterJogada(int indice) {
+            int linha;
+            int coluna;
+
+            for(int i = 0; i < jogadasRestantes; i++) {
+                if(indice == i) {
+                    linha = jogadasPossiveis[i][0];
+                    coluna = jogadasPossiveis[i][1];
+                }
+            }
+            return {linha, coluna};
         }
 };
 
